@@ -36,12 +36,54 @@ class TodoList {
   }
   
 
-  markTodoCompleted(index: number): void {
+   // Metod för att markera en todo som "klar"
+   markTodoCompleted(index: number): void {
+    // Kontrollera att indexet är inom giltigt intervall (inte utanför arrayen)
     if (index >= 0 && index < this.todos.length) {
+      // Sätt "completed" till true för vald todo
       this.todos[index].completed = true;
+
+      // Spara uppdaterad lista till localStorage
       this.saveToLocalStorage();
     }
   }
 
+  // Returnerar alla todos i listan
+  getTodos(): Todo[] {
+    return this.todos;
+  }
 
+  // Sparar todos till webbläsarens localStorage
+  saveToLocalStorage(): void {
+    // Konverterar todos-arrayen till en sträng i JSON-format och sparar den
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+  }
+
+  // Läser in todos från localStorage (om det finns några sparade)
+  loadFromLocalStorage(): void {
+    // Hämtar strängen från localStorage
+    const saved = localStorage.getItem("todos");
+
+    if (saved) {
+      try {
+        // Försöker parsa strängen till ett riktigt JavaScript-objekt (en array)
+        const parsed = JSON.parse(saved);
+
+        // Kontroll: säkerställ att det är en array
+        if (Array.isArray(parsed)) {
+          // Filtrera fram bara objekt som följer Todo-strukturen:
+          this.todos = parsed.filter(
+            (todo: any) =>
+              typeof todo.task === "string" &&                // task ska vara en sträng
+              typeof todo.completed === "boolean" &&          // completed ska vara boolean
+              [1, 2, 3].includes(todo.priority)               // priority måste vara 1, 2 eller 3
+          );
+        }
+      } catch {
+        // Om något går fel vid parsning, t.ex. korrupt JSON
+        // Återställ listan till en tom array
+        this.todos = [];
+      }
+    }
+  }
 }
