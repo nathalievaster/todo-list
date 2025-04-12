@@ -52,7 +52,7 @@ li {
   background: #f9f9f9;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
-  border-left: 4px solid #bbb;
+  border-left: 15px solid #bbb;
   display: flex;
   justify-content: space-between;
   align-items: center;
