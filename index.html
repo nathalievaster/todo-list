@@ -8,6 +8,24 @@
   </head>
   <body>
 
+    <div class="container">
+      <h1>Att Göra-lista</h1>
+      <form id="todoForm">
+        <input type="text" id="taskInput" placeholder="Vad ska du göra?" required />
+        <select id="priorityInput">
+          <option value="1">Hög prioritet</option>
+          <option value="2">Mellan</option>
+          <option value="3">Låg</option>
+        </select>
+        <button type="submit">Lägg till</button>
+      </form>
+  
+      <ul id="todoList"></ul>
+  
+      <p id="error" class="error"></p>
+    </div>
+  
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
