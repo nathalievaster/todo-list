@@ -77,3 +77,10 @@ li[data-priority="3"] {
   color: red;
   text-align: center;
 }
+
+li small {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}

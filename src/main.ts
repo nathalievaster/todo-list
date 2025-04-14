@@ -2,6 +2,8 @@ interface Todo {
   task: string;
   completed: boolean;
   priority: 1 | 2 | 3;
+  createdAt: string;
+  completedAt?: string;
 }
 
 class TodoList {
@@ -17,40 +19,54 @@ class TodoList {
     if (!task.trim() || ![1, 2, 3].includes(priority)) {
       return false; // Ogiltig input → returnera false
     }
-  
+
     // Skapa ett nytt todo-objekt som följer Todo-interfacet
     const newTodo: Todo = {
       task: task.trim(),      // Tar bort onödiga mellanslag i början/slutet
       completed: false,       // Alla nya todos är inte klara från början
-      priority: priority as 1 | 2 | 3 // Typecastar till exakt 1, 2 eller 3
+      priority: priority as 1 | 2 | 3, // Typecastar till exakt 1, 2 eller 3
+      createdAt: new Date().toISOString() // Lägg till skapad-datum
     };
-  
+
     // Lägg till det nya todo-objektet i todos-arrayen
     this.todos.push(newTodo);
-  
+
     // Spara den uppdaterade listan till localStorage
     this.saveToLocalStorage();
-  
+
     // Allt gick bra → returnera true
     return true;
   }
-  
 
-   // Metod för att markera en todo som "klar"
-   markTodoCompleted(index: number): void {
+  // Metod för att markera en todo som "klar"
+  markTodoCompleted(index: number): void {
     // Kontrollera att indexet är inom giltigt intervall (inte utanför arrayen)
     if (index >= 0 && index < this.todos.length) {
       // Sätt "completed" till true för vald todo
       this.todos[index].completed = true;
-
+      this.todos[index].completedAt = new Date().toISOString(); // Spara datum den markerades som klar
       // Spara uppdaterad lista till localStorage
       this.saveToLocalStorage();
     }
   }
 
-  // Returnerar alla todos i listan
+  // Metod för att redigera en todo
+  editTodo(index: number, newTask: string): void {
+    if (newTask.trim()) {
+      this.todos[index].task = newTask.trim();
+      this.saveToLocalStorage();
+    }
+  }
+
+  // Metod för att ta bort en todo
+  deleteTodo(index: number): void {
+    this.todos.splice(index, 1);
+    this.saveToLocalStorage();
+  }
+
+  // Returnerar alla todos i listan (sorterade efter prioritet)
   getTodos(): Todo[] {
-    return this.todos;
+    return this.todos.slice().sort((a, b) => a.priority - b.priority);
   }
 
   // Sparar todos till webbläsarens localStorage
@@ -125,7 +141,37 @@ function renderTodos() {
     // Lägg checkbox och text i etiketten
     label.appendChild(checkbox);
     label.append(" " + todo.task);
+
+    // Skapa <small>-element som visar när uppgiften skapades
+    const createdAt = document.createElement("small");
+    createdAt.textContent = `Skapad: ${new Date(todo.createdAt).toLocaleString()}`;
+
+    // Om uppgiften är klar, visa även när
+    const completedAt = document.createElement("small");
+    if (todo.completed && todo.completedAt) {
+      completedAt.textContent = `Klar: ${new Date(todo.completedAt).toLocaleString()}`;
+    }
+
+    // Skapa knapp för borttagning
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.addEventListener("click", () => {
+      if (confirm("Vill du ta bort uppgiften?")) {
+        todoList.deleteTodo(index);
+        renderTodos();
+      }
+    });
+
     li.appendChild(label); // Lägg etiketten i <li>
+    li.appendChild(document.createElement("br"));
+    li.appendChild(createdAt);
+    if (todo.completedAt) {
+      li.appendChild(document.createElement("br"));
+      li.appendChild(completedAt);
+    }
+    li.appendChild(document.createElement("br"));
+    li.appendChild(deleteBtn);
+
     list.appendChild(li); // Lägg till <li> i todo-listan i DOM
   });
 }
