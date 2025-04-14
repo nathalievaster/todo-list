@@ -50,14 +50,6 @@ class TodoList {
     }
   }
 
-  // Metod för att redigera en todo
-  editTodo(index: number, newTask: string): void {
-    if (newTask.trim()) {
-      this.todos[index].task = newTask.trim();
-      this.saveToLocalStorage();
-    }
-  }
-
   // Metod för att ta bort en todo
   deleteTodo(index: number): void {
     this.todos.splice(index, 1);
