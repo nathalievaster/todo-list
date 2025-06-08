@@ -1,5 +1,4 @@
 // DOM-hantering
-import { Todo } from "./todo.model";
 import { TodoList } from "./todo-list";
 
 // Skapa ett nytt TodoList-objekt som hanterar data
